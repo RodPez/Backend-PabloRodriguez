@@ -1,7 +1,6 @@
 let idGenerado = 0;
-class ProductManager {
-    productos  
 
+class ProductManager {
     constructor(){
         this.productos =[]
     }
@@ -11,45 +10,75 @@ class ProductManager {
     }
 
     getProductById(idABuscar){
-        const productoConIdBuscado = this.productos.filter(function(producto){
-            return producto.id === idABuscar
-         })
-         if (productoConIdBuscado.length !== 0) {
-            console.log(productoConIdBuscado);//Imprime un array con  el producto  con el ID buscado en consola. 
+        const productoConIdBuscado = this.productos.find((p) => p.id === idABuscar);
+        const erroMsg = "No existe el producto con ID indicado."
+         if (!productoConIdBuscado) {
+            return erroMsg;
         } else {
-            console.log("No existe el producto con ID indicado.");
+            return productoConIdBuscado;
         }
-        console.log(productoConIdBuscado);
     }
 
-    addProduct(){
-        
+    addProduct(newProduct){
+
         function generarId(){
             idGenerado= idGenerado+ 1;
             return idGenerado;
         }
-        
-        const newProduct = {
-            id: generarId(),
-            title: "producto prueba",
-            description:"Este es un producto prueba",
-            price:200,
-            thumbnail:"Sin imagen",
-            code:"abc123",
-            stock:25
-        }
+
         const codigoYaIngresado = this.productos.filter(function(producto){
             return producto.code === newProduct.code
          })
 
+        const yaIngresado = "Este producto ya fue ingresado"
+        if (codigoYaIngresado.length !== 0) {
+            console.log(yaIngresado); //Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
+        }else{
+            newProduct.id = generarId();
+            this.productos.push(newProduct);
+        }
+        const { title , description, price, thumbnail, code, stock } = newProduct;
+        const errorProd = "Faltan datos del producto"
+        if (!title ||
+            !description ||
+            !price ||
+            !thumbnail ||
+            !code ||
+            !stock
+            ) {
+                return errorProd; //Se imprime este mensaje si falta algun campo de producto.
+        }
+    }
+     
+    updateProduct(codigo, propACambiar, nuevoValor){
+        const prodAActualizar = this.productos.find(function(producto){
+            return producto.code === codigo;
+        });
 
-       if (codigoYaIngresado.length === 0) {
-        this.productos.push(newProduct)
+        prodAActualizar[propACambiar] = nuevoValor;
+
+        this.productos = this.productos.map(function(producto){
+            if (producto.code === prodAActualizar.code){
+                return prodAActualizar;
+            }
+            return producto;
+        });
+        return this.productos;
+        
+    }
+
+    deleteProduct(codProd, valorCod){
+        const productIndex = this.productos.findIndex(function(producto){
+            return producto[codProd] === valorCod;
+        });
+
+        const errorDelete = "El producto no existe"
+        if (productIndex !== -1) {
+            this.productos.splice(productIndex,1)
         } else {
-            console.log("Este producto ya fue ingresado");//Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
-}
- 
-        console.log(newProduct.id); // Imprime el id incremental automatico que se le dará al nuevo producto ingresado
+            console.log(errorDelete); 
+        }
+        return this.productos;
     }
 }
 
