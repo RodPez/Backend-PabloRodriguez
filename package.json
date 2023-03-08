@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/RodPez/Backend-PabloRodriguez/issues"
   },
-  "homepage": "https://github.com/RodPez/Backend-PabloRodriguez#readme"
+  "homepage": "https://github.com/RodPez/Backend-PabloRodriguez#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

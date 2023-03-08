@@ -7,15 +7,20 @@ class ProductManager {
         this.productos =[]
         this.path = path
     }
-    
+
+
     async getProducts(){
         try {
-            const readData =await fs.promises.readFile(this.path, "utf-8")
-            const datosParseados = JSON.parse(readData)
-            this.productos = datosParseados
-            return this.productos          
+            if (!fs.existsSync(this.path)) {
+                return this.productos;
+            }else {
+                const readData = await fs.promises.readFile(this.path, "utf-8");
+                const datosParseados = JSON.parse(readData);
+                this.productos = datosParseados;
+                return this.productos;          
+            }
         } catch (error) {
-            console.log(error);
+            return `El archivo no existe: ${error}`;
         }
     }
 
@@ -38,22 +43,19 @@ class ProductManager {
         }
     }
     async addProduct(newProduct){
-        try {
-            this.getProducts()
-
+        try { 
             const codigoYaIngresado = this.productos.filter(function(producto){
                 return producto.code === newProduct.code
             })
-    
-            const yaIngresado = "Este producto ya fue ingresado"
+            const initialSize = this.productos.length;
+
             if (codigoYaIngresado.length !== 0) {
-                console.log(yaIngresado); //Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
+                return `Este producto ya fue ingresado`; //Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
             }else{
                 newProduct.id = this.generarId();
                 this.productos.push(newProduct);
             }
             const { title , description, price, thumbnail, code, stock } = newProduct;
-            const errorProd = "Faltan datos del producto"
             if (!title ||
                 !description ||
                 !price ||
@@ -61,61 +63,56 @@ class ProductManager {
                 !code ||
                 !stock
                 ) {
-                    return errorProd; //Se imprime este mensaje si falta algun campo de producto.
+                    return `Faltan datos del producto`; //Se imprime este mensaje si falta algun campo de producto.
             }
-            const convertir = this.productos
-            const dataJson= JSON.stringify(convertir)
-            await fs.promises.writeFile(this.path,dataJson)
+            if (this.productos.length > initialSize) {
+                const convertir = this.productos
+                const dataJson= JSON.stringify(convertir)
+                await fs.promises.writeFile(this.path,dataJson)
+            }
         } catch (error) {
-            console.log(error);
+            return error;
         }
     }
-     
+     //En el updateProduct no se tiene en cuenta el cambiar la propiedad ID ya que en la consigna decia que era la única propiedad que no se debía cambiar.
     async updateProduct(id, propACambiar, nuevoValor){
         try {
-            this.getProducts();
             const prodAActualizar = this.productos.find(function(producto){
                 return producto.id === id;
             });
     
-            prodAActualizar[propACambiar] = nuevoValor;
-    
+            
             this.productos = this.productos.map(function(producto){
-                if (producto.id === prodAActualizar.id){
-                    return prodAActualizar;
+                if (producto.id === prodAActualizar.id && producto[propACambiar] !== nuevoValor) {
+                    prodAActualizar[propACambiar] = nuevoValor;
+                    const datosActualizados = this.productos
+                    const actualizadosAJson = JSON.stringify(datosActualizados)
+                    fs.promises.writeFile(this.path,actualizadosAJson)
+                    return datosActualizados;
                 }
                 return producto;
-            });
-            const datosActualizados = this.productos
-            const actualizadosAJson = JSON.stringify(datosActualizados)
-            await fs.promises.writeFile(this.path,actualizadosAJson)
-            return datosActualizados;
+            }.bind(this));
         } catch (error) {
-            console.log(error);
+            return error;
         }
         
     }
 
-    async deleteProduct(idProd, valorCod){
+    async deleteProduct(idProd){
         try {
-            this.getProducts();
-            const productIndex = this.productos.findIndex(function(producto){
-                return producto[idProd] === valorCod;
-            });
+            const productABorrar = this.productos.find((p) => p.id === idProd);
     
-            const errorDelete = "El producto no existe"
-            if (productIndex !== -1) {
-                this.productos.splice(productIndex,1)
+             
+            if (productABorrar) {
+                this.productos.splice(productABorrar,1)
+                const productosConProdBorrado = this.productos
+                const prodBorradAJson = JSON.stringify(productosConProdBorrado)
+                await fs.promises.writeFile(this.path, prodBorradAJson)
             } else {
-                console.log(errorDelete); 
+                return `El producto no existe o ya fue borrado : ${null}`; 
             }
-            const productosConProdBorrado = this.productos
-            const prodBorradAJson = JSON.stringify(productosConProdBorrado)
-            await fs.promises.writeFile(this.path, prodBorradAJson)
-            return productosConProdBorrado;
-        
         } catch(error) {
-            console.log(error);
+            return error;
         }
     }
 }
