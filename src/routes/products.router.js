@@ -1,6 +1,5 @@
 const {Router} = require("express");
-const ProductManager = require( "../../class/ProductManager")
-const listaDeProductos = new ProductManager("../../files/Productos.json")
+
 
 const router = Router();
 
@@ -16,10 +15,10 @@ router.get("/", async (req , res) =>{
     }
 })
 
-router.get("/:id", async (req , res) =>{
+router.get("/:pid", async (req , res) =>{
     try {
-        const id = req.params.id;
-        const prodPorId = await listaDeProductos.getProductById(parseInt(id))
+        const {pid} = req.params;
+        const prodPorId = await listaDeProductos.getProductById(parseInt(pid))
         console.log(prodPorId);
         res.status(200).json({prodPorId}) 
     } catch (error) {

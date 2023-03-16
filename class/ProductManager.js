@@ -1,6 +1,5 @@
 const fs = require("fs");
 
-//let idGenerado = 0;
 
 class ProductManager {
     constructor(path){
@@ -53,14 +52,13 @@ class ProductManager {
                 return `Este producto ya fue ingresado`; //Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
             }else{
                 newProduct.id = this.generarId();
-                newProduct.status = true;
+                newProduct.status = true; // Se agrega la propiedad status y se le da el valor true ya que debe ser asi por defecto
                 this.productos.push(newProduct);
             }
-            const { title , description, price, thumbnail, code, stock } = newProduct;
+            const { title , description, price, code, stock } = newProduct;
             if (!title ||
                 !description ||
                 !price ||
-                !thumbnail ||
                 !code ||
                 !stock
                 ) {
@@ -84,7 +82,7 @@ class ProductManager {
     
             
             const updatedProductos = await Promise.all(this.productos = this.productos.map(async function(producto){
-                if (producto.id === prodAActualizar.id && producto[propACambiar] !== nuevoValor) {
+                if (producto.id === prodAActualizar.id && producto[propACambiar] !== nuevoValor && propACambiar !== "id") {
                     prodAActualizar[propACambiar] = nuevoValor;
                     const datosActualizados = this.productos
                     const actualizadosAJson = JSON.stringify(datosActualizados)
@@ -103,17 +101,16 @@ class ProductManager {
     async deleteProduct(idProd){
         try {
             const productABorrar = this.productos.findIndex((p) => p.id === idProd);
-            const aBorrar = this.productos[productABorrar]
-            console.log(aBorrar);
              
-            if (productABorrar) {
-                aBorrar.status = false
+            if (productABorrar === -1) {
+                return `El producto no existe o ya fue borrado : ${null}`; 
+            } else {
+                this.productos[productABorrar].status = false; //En lugar de realizar el slice abajo comentado se setea el valor de status en false para "borrar" el producto
+                this.productos[productABorrar].stock = 0; //Se setea el stock en 0 ya que al borrar el producto no esta disponible.
                 //this.productos.splice(productABorrar,1)
                 const productosConProdBorrado = this.productos
                 const prodBorradAJson = JSON.stringify(productosConProdBorrado)
                 await fs.promises.writeFile(this.path, prodBorradAJson)
-            } else {
-                return `El producto no existe o ya fue borrado : ${null}`; 
             }
         } catch(error) {
             return `No se pudo llevar a cabo el borrado ${error}`;

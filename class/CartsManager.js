@@ -1,5 +1,8 @@
 const fs = require("fs")
 
+const productPath = "../files/Productos.json"
+
+const productsData = JSON.parse(await fs.promises.readFile(productPath, "utf-8"));
 class CartsManager {
     constructor(path){
         this.carts = []
@@ -47,6 +50,7 @@ class CartsManager {
 
             
             newCart.id = this.generarId();
+            newCart.products = [];
             this.carts.push(newCart);
             
             if (this.carts.length > initialSize) {
@@ -56,6 +60,21 @@ class CartsManager {
             }
         } catch (error) {
             return `No se pudo cargar el cart ${error}`;
+        }
+    }
+    
+    async addProductToCart(cartId,productId,cantidad){
+        try {
+            const cartBuscado = this.carts.find((e) => e.id === cartId);
+            const productoBuscado = productsData.find((e) => e.id === productId)
+            if (cartBuscado.products.id ===productId && productoBuscado) {
+                cartBuscado.products.cantidad += cantidad
+            }else{
+                cartBuscado.products.push({id : productId, cantidad : cantidad})
+            }
+            return cartBuscado
+        } catch (error) {
+            
         }
     }
 
