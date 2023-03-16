@@ -55,21 +55,21 @@ const ejecucion= async () =>{
     try {
         await nuevaListaDeProductos.getProducts() //Imprime el estado del arreglo de productos inicializado como vacío en caso de que no exista o no haya datos en el archivo json, en caso contrario traera y cargara todos los datos que alli se encuentren.
         //console.log(nuevaListaDeProductos.productos);
-        await nuevaListaDeProductos.addProduct(newProduct); //Se ejecuta el comando para agregar un producto
+        //await nuevaListaDeProductos.addProduct(newProduct); //Se ejecuta el comando para agregar un producto
         //console.log(await nuevaListaDeProductos.addProduct(newProduct)); // Se utiliza el log para corroborar que es lo que retorna la funcion, en caso de que se haber algun error se retornara el mensaje correspondiente.
         //console.log(nuevaListaDeProductos.productos);
-        await nuevaListaDeProductos.addProduct(newProduct2)
+        //await nuevaListaDeProductos.addProduct(newProduct2)
         //console.log(await nuevaListaDeProductos.getProducts());
-        await nuevaListaDeProductos.addProduct(newProduct3)
-        await nuevaListaDeProductos.addProduct(newProduct4)
-        await nuevaListaDeProductos.addProduct(newProduct5)
-        await nuevaListaDeProductos.addProduct(newProduct6)
+        //await nuevaListaDeProductos.addProduct(newProduct3)
+        //await nuevaListaDeProductos.addProduct(newProduct4)
+        //await nuevaListaDeProductos.addProduct(newProduct5)
+        //await nuevaListaDeProductos.addProduct(newProduct6)
         //console.log(await nuevaListaDeProductos.getProducts());
         //console.log(await nuevaListaDeProductos.getProductById(1));
         //console.log(await nuevaListaDeProductos.getProductById(2));
-        //nuevaListaDeProductos.updateProduct(4, "description", "Producto de prueba actualizado")
+        //nuevaListaDeProductos.updateProduct(2, "description", "Producto de prueba 2 actualizado")
         //console.log(await nuevaListaDeProductos.getProducts()); 
-        //console.log(await nuevaListaDeProductos.deleteProduct(1)); 
+        await nuevaListaDeProductos.deleteProduct(1); 
         
         
         

@@ -53,6 +53,7 @@ class ProductManager {
                 return `Este producto ya fue ingresado`; //Si el código del producto a ingresar ya existe imprime el mensaje de error detallado.
             }else{
                 newProduct.id = this.generarId();
+                newProduct.status = true;
                 this.productos.push(newProduct);
             }
             const { title , description, price, thumbnail, code, stock } = newProduct;
@@ -71,7 +72,7 @@ class ProductManager {
                 await fs.promises.writeFile(this.path,dataJson)
             }
         } catch (error) {
-            return error;
+            return `No se pudo cargar el nuevo producto ${error}`;
         }
     }
      //En el updateProduct no se tiene en cuenta el cambiar la propiedad ID ya que en la consigna decia que era la única propiedad que no se debía cambiar.
@@ -82,16 +83,17 @@ class ProductManager {
             });
     
             
-            this.productos = this.productos.map(function(producto){
+            const updatedProductos = await Promise.all(this.productos = this.productos.map(async function(producto){
                 if (producto.id === prodAActualizar.id && producto[propACambiar] !== nuevoValor) {
                     prodAActualizar[propACambiar] = nuevoValor;
                     const datosActualizados = this.productos
                     const actualizadosAJson = JSON.stringify(datosActualizados)
-                    fs.promises.writeFile(this.path,actualizadosAJson)
+                    await fs.promises.writeFile(this.path,actualizadosAJson)
                     return datosActualizados;
                 }
                 return producto;
-            }.bind(this));
+            }.bind(this)));
+            this.productos = updatedProductos
         } catch (error) {
             return error;
         }
@@ -100,11 +102,13 @@ class ProductManager {
 
     async deleteProduct(idProd){
         try {
-            const productABorrar = this.productos.find((p) => p.id === idProd);
-    
+            const productABorrar = this.productos.findIndex((p) => p.id === idProd);
+            const aBorrar = this.productos[productABorrar]
+            console.log(aBorrar);
              
             if (productABorrar) {
-                this.productos.splice(productABorrar,1)
+                aBorrar.status = false
+                //this.productos.splice(productABorrar,1)
                 const productosConProdBorrado = this.productos
                 const prodBorradAJson = JSON.stringify(productosConProdBorrado)
                 await fs.promises.writeFile(this.path, prodBorradAJson)
@@ -112,9 +116,9 @@ class ProductManager {
                 return `El producto no existe o ya fue borrado : ${null}`; 
             }
         } catch(error) {
-            return error;
+            return `No se pudo llevar a cabo el borrado ${error}`;
         }
     }
-}
+}   
 module.exports = ProductManager
 
