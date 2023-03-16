@@ -13,6 +13,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use("/api/products" , productsRouter(listaDeProductos));
+
 app.use("/api/carts", cartsRouter)
 
 
