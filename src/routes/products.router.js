@@ -4,13 +4,8 @@ const {Router} = require("express");
 const router = Router();
 
 function routerProductos(listaDeProductos) {
-    const asyncMiddleware = fn =>
-        (req, res, next) => {
-            Promise.resolve(fn(req, res, next))
-            .catch(next);
-    };
-
-    router.get("/", asyncMiddleware(async (req, res, next) =>{
+    
+    router.get("/", async (req, res, next) =>{
         try {
             const lista = await listaDeProductos.getProducts();
             const limit = parseInt(req.query.limit) || lista.length;
@@ -21,9 +16,9 @@ function routerProductos(listaDeProductos) {
             res.status(500).json({ error: "Error interno del servidor" });
             next(error);
         }
-    }))
+    })
 
-    router.get("/:pid", asyncMiddleware(async (req, res, next) =>{
+    router.get("/:pid", async (req, res, next) =>{
         try {
             const {pid} = req.params;
             const prodPorId = await listaDeProductos.getProductById(parseInt(pid))
@@ -34,9 +29,9 @@ function routerProductos(listaDeProductos) {
             res.status(404).json({error: "El producto no se encuentra."})
             next(error);
         }
-    }))
+    })
 
-    router.post("/", asyncMiddleware(async (req, res, next) =>{
+    router.post("/", async (req, res, next) =>{
         try {
             const {title , description, price, thumbnail, code, stock} = req.body
             const newProductInfo ={
@@ -54,9 +49,9 @@ function routerProductos(listaDeProductos) {
             res.status(500).json({error: "No se pudo cargar el producto"})
             next(error);
         }
-    }))
+    })
 
-    router.delete("/:id", asyncMiddleware(async (req, res, next) => {
+    router.delete("/:id", async (req, res, next) => {
         try {
             const {id} = req.params;
             await listaDeProductos.deleteProduct(parseInt(id))
@@ -67,9 +62,9 @@ function routerProductos(listaDeProductos) {
             next(error);
         }
 
-    }))
+    })
 
-    router.put("/:id", asyncMiddleware(async (req, res, next) => {
+    router.put("/:id", async (req, res, next) => {
         try {
             const {id} = req.params;
             const {propiedad, valor} = req.body;
@@ -79,9 +74,9 @@ function routerProductos(listaDeProductos) {
         } catch (error) {
             console.log(`No se pudo actualizar el producto correctamente ${error}`);
             res.status(500).json({error: "No se pudo actualizar el producto."})
-            next(error);
+            next(error)
         }
-    }))
-    return router
+    })
+    return Promise.resolve(router)
 }
 module.exports = routerProductos;
