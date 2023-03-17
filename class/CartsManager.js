@@ -1,8 +1,5 @@
 const fs = require("fs")
 
-const productPath = "../files/Productos.json"
-
-const productsData = JSON.parse(await fs.promises.readFile(productPath, "utf-8"));
 class CartsManager {
     constructor(path){
         this.carts = []
@@ -26,7 +23,7 @@ class CartsManager {
 
     getCartById(idABuscar){
         const cartConIdBuscado = this.carts.find((e) => e.id === idABuscar);
-        const erroMsg = "No existe el producto con ID indicado."
+        const erroMsg = "No existe el carrito con ID indicado."
          if (!cartConIdBuscado) {
             return erroMsg;
         } else {
@@ -43,18 +40,18 @@ class CartsManager {
         }
     }
 
-    async addCart(newCart){
+    async addCart(){
         try { 
             
             const initialSize = this.carts.length;
-
+            const newCart = {};
             
             newCart.id = this.generarId();
             newCart.products = [];
             this.carts.push(newCart);
             
             if (this.carts.length > initialSize) {
-                const convertir = this.productos
+                const convertir = this.carts
                 const dataJson= JSON.stringify(convertir)
                 await fs.promises.writeFile(this.path,dataJson)
             }
@@ -63,18 +60,25 @@ class CartsManager {
         }
     }
     
-    async addProductToCart(cartId,productId,cantidad){
+    async addProductToCart(cartId,listaProductos, productId){
         try {
             const cartBuscado = this.carts.find((e) => e.id === cartId);
-            const productoBuscado = productsData.find((e) => e.id === productId)
-            if (cartBuscado.products.id ===productId && productoBuscado) {
-                cartBuscado.products.cantidad += cantidad
+            const productoBuscado = listaProductos.find((e) => e.id === productId)
+            const prodEnCart = cartBuscado.products.find((e) => e.id === productId)
+            //El delete en products es cambiar el status a false y poner el stock en 0, este if funciona de controlador si el stock es 0  para que no se cargue nada en el array de producto
+            if (productoBuscado.stock === 0) {
+                return `No se puede agregar el producto "${productoBuscado.nombre}" al carrito porque su stock es insuficiente.`;
+            }else if (prodEnCart && productoBuscado) {
+                prodEnCart.cantidad = prodEnCart.cantidad + 1
             }else{
-                cartBuscado.products.push({id : productId, cantidad : cantidad})
+                cartBuscado.products.push({id : productId, cantidad : 1})
             }
-            return cartBuscado
+            const convertir = this.carts
+            const dataJson= JSON.stringify(convertir)
+            await fs.promises.writeFile(this.path,dataJson)
+            return this.carts
         } catch (error) {
-            
+            return `No se pudo cargar el producto al carrito correctamente ${error}`
         }
     }
 

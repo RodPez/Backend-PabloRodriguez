@@ -1,10 +1,9 @@
-
 const { Router } = require("express");
-const ProductManager = require("../../class/ProductManager")
-const listaDeProductos = new ProductManager('../../files/Productos.json')
 
 const router = Router();
 
+
+module.exports = (listaDeProductos) => {
     
     router.get("/", async (req, res) =>{
         try {
@@ -82,4 +81,5 @@ const router = Router();
     })
   
 
-module.exports = router;
+    return router;
+}
