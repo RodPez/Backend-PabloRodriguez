@@ -5,7 +5,7 @@ const router = Router();
 
 module.exports = (listaDeProductos) => {
     
-    router.get("/", async (req, res) =>{
+    router.get("/", async (req, res, next) =>{
         try {
             const lista = await listaDeProductos.getProducts();
             console.log(await listaDeProductos.getProducts());
@@ -16,7 +16,7 @@ module.exports = (listaDeProductos) => {
         } catch (error) {
             console.log(`Error al obtener la lista de productos: ${error}`);
             res.status(500).json({ error: "Error interno del servidor" });
-            //next(error);
+            next(error);
         }
     })
 
