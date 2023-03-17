@@ -1,20 +1,23 @@
-const {Router} = require("express");
 
+const { Router } = require("express");
+const ProductManager = require("../../class/ProductManager")
+const listaDeProductos = new ProductManager('../../files/Productos.json')
 
 const router = Router();
 
-function routerProductos(listaDeProductos) {
     
-    router.get("/", async (req, res, next) =>{
+    router.get("/", async (req, res) =>{
         try {
             const lista = await listaDeProductos.getProducts();
+            console.log(await listaDeProductos.getProducts());
+            console.log(lista);
             const limit = parseInt(req.query.limit) || lista.length;
             const productosLimitados = lista.slice(0, limit);
             res.status(200).json({productos: productosLimitados});   
         } catch (error) {
             console.log(`Error al obtener la lista de productos: ${error}`);
             res.status(500).json({ error: "Error interno del servidor" });
-            next(error);
+            //next(error);
         }
     })
 
@@ -77,6 +80,6 @@ function routerProductos(listaDeProductos) {
             next(error)
         }
     })
-    return Promise.resolve(router)
-}
-module.exports = routerProductos;
+  
+
+module.exports = router;
