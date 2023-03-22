@@ -23,7 +23,15 @@ const httpServer = app.listen(port , () =>{
 
 const io = new Server(httpServer);
 
+let producto= {}
+
 io.on("connection", socket =>{
   console.log("Socket conectado");
-  io.emit("listaDeProductos", "/files/Productos.json")
+
+  socket.on('formulario-enviado', function(formDataJson){
+    producto = JSON.parse(formDataJson)
+    console.log(producto);
+    io.emit("agregarProducto", producto)
+  });
+
 })
