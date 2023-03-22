@@ -1,35 +1,29 @@
 const express = require("express");
 const handlebars = require("express-handlebars");
-const ProductManager = require( "../class/ProductManager");
-const CartsManager = require("../class/CartsManager");
-const pathCarts = "./files/Carritos.json";
-const pathProd = "./files/Productos.json";
-const listaDeProductos =  new ProductManager(pathProd);
-const listaDeCarts = new CartsManager(pathCarts);
+const {Server} = require("socket.io");
+const router = require("./router/index.js");
 
-const productsRouter = require("./routes/products.router");
-const cartsRouter = require("./routes/carts.router")
-const indexRouter = require("./routes/index.router")
-
+const port = 8080;
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + "/public"));
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views")
 app.set("view engine", "handlebars")
-
-
-
-const port = 8080;
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
       
-app.use("/api/products" ,productsRouter(listaDeProductos));
-app.use("/api/carts", cartsRouter(listaDeCarts,listaDeProductos));
-app.use("/index", indexRouter)    
+router(app)  
 
 
-app.listen(port , () =>{
+const httpServer = app.listen(port , () =>{
   console.log(`Server running at por ${port}`);
-})
+});
 
+const io = new Server(httpServer);
+
+io.on("connection", socket =>{
+  console.log("Socket conectado");
+  io.emit("listaDeProductos", "/files/Productos.json")
+})
