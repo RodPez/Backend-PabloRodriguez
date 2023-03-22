@@ -1,0 +1,18 @@
+<h1 class="text-center">Lista de productos</h1>
+<div class="row d-flex flex-wrap m-1 justify-content-center">
+    {{#each productos}}
+        {{#if this.status}}
+        <div class="col-sm-3">
+            <div class="card text-center m-2  text-bg-secondary">
+                <h2 class="card-title">{{this.title}}</h2>
+                <div class="card-body">
+                    <p>Precio: {{this.price}}</p>
+                    <p>Descripción: {{this.description}}</p>
+                    <p>Imagen : {{this.thumbnail}} </p>
+                    <p>Stock : {{this.stock}} </p>
+                </div>
+            </div>
+        </div> 
+        {{/if}}   
+    {{/each}}
+</div>
