@@ -28,8 +28,8 @@ let producto= {}
 io.on("connection", socket =>{
   console.log("Socket conectado");
 
-  socket.on('formulario-enviado', function(formDataJson){
-    producto = JSON.parse(formDataJson)
+  socket.on('formulario-enviado', function(formData){
+    producto = JSON.parse(formData)
     console.log(producto);
     io.emit("agregarProducto", producto)
   });

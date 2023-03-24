@@ -1,32 +1,31 @@
 const socket =io();
 
 const formulario = document.getElementById('producto');
+const inputs = form.querySelectorAll('input');
 
-formulario.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(formulario); 
-    const formDataJson = JSON.stringify(Object.fromEntries(formData)); 
-    
-    socket.emit('formulario-enviado', formDataJson); 
+formulario.addEventListener('submit', (event) => {
+    event.preventDefault();
+ 
+    const formData = {}; 
+
+  inputs.forEach((input) => {
+    formData[input.name] = input.value; 
   });
 
-  socket.on("agregarProducto", producto => {
-    crearTarjeta(producto);
+  fetch('/realtimeproducts', { 
+    method: 'POST',
+    body: JSON.stringify(formData), 
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
+  .then(response => response.json())
+  });
 
-  function crearTarjeta(prod) {
-    
-    const tarjetaHtml = document.createElement('div');
-    tarjetaHtml.classList.add('card', 'text-center', 'm-2',  'text-bg-secondary', "col-sm-3");
-    tarjetaHtml.innerHTML = `
-      <h2>${prod.title}</h2>
-      <p>${prod.price}</p>
-      <p>${prod.description}</p>
-      <p>${prod.thumbnail} </p>
-      <p>${prod.stock} </p>
-    `;
-    
-    
-    const contenedorTarjetas = document.getElementById('contenedor-cards');
-    contenedorTarjetas.appendChild(tarjetaHtml);
-  }
+  socket.emit('formulario-enviado', formData)
+
+
+
+
+
+

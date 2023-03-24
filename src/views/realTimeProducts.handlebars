@@ -1,6 +1,6 @@
 <h1 class="text-center">Lista de productos</h1>
 <div class="card m-3">
-    <form class="m-3" id="producto">
+    <form class="m-3" action="/realtimeproducts" method="post" id="producto">
     <div class="mb-2 col-sm-5">
         <label  class="form-label">Nombre del Producto</label>
         <input type="text" class="form-control" placeholder="Nombre del producto" name="title">
@@ -25,7 +25,7 @@
         <label  class="form-label">Stock</label>
         <input type="number" class="form-control" placeholder="Stock" name="stock">
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" value="Crear Producto" class="btn btn-primary">Submit</button>
     </form>
 </div>
 <div class="row d-flex flex-wrap m-1 justify-content-center" id="contenedor-cards">
