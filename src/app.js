@@ -1,9 +1,8 @@
 const express = require("express");
 const handlebars = require("express-handlebars");
-const {Server} = require("socket.io");
 const router = require("./router/index.js");
+const mongoConnect = require("../db/index.js");
 
-const port = 8080;
 const app = express();
 
 app.use(express.json());
@@ -13,25 +12,11 @@ app.use(express.static(__dirname + "/public"));
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views")
 app.set("view engine", "handlebars")
+
+mongoConnect();
       
 router(app)  
 
 
-const httpServer = app.listen(port , () =>{
-  console.log(`Server running at por ${port}`);
-});
 
-const io = new Server(httpServer);
-
-let producto= {}
-
-io.on("connection", socket =>{
-  console.log("Socket conectado");
-
-  socket.on('formulario-enviado', function(formData){
-    producto = JSON.parse(formData)
-    console.log(producto);
-    io.emit("agregarProducto", producto)
-  });
-
-})
+module.exports = app;
