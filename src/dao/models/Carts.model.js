@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cartCollection = "cart";
 
 const prodOnCartSchema = new mongoose.Schema({
-    id: Number,
+    id: String,
     cantidad: Number
 })
 

@@ -28,6 +28,16 @@ router.get("/", async (req, res) =>{
     }
 })
 
+router.get("/:id", async (req,res) =>{
+    try {
+        const {id} =req.params;
+        const productFinded = await productsDao.findOne(id)
+        res.status(200).json({message: productFinded})
+    } catch (error) {
+        res.json(error)
+    }
+})
+
 router.post("/", async (req,res) =>{
     try {
         const {title,description,price,thumbnail,code,stock} = req.body;
@@ -60,7 +70,7 @@ router.put("/:id", async (req, res) =>{
             code,
             stock
         }
-        const updateProduct = await Products.updateOne({_id:id}, updateProductInfo)
+        const updateProduct = await productsDao.update({_id:id}, updateProductInfo)
         res.status(200).json({message: updateProduct})
     } catch (error) {
         res.json(error.message)
@@ -70,7 +80,7 @@ router.put("/:id", async (req, res) =>{
 router.delete("/:id", async (req, res) =>{
     try {
         const {id} =req.params;
-        const deleteProduct = await Products.updateOne({_id:id},{status:false})
+        const deleteProduct = await productsDao.update({_id:id},{status:false})
         res.status(200).json({message: deleteProduct})
     } catch (error) {
         res.json(error)

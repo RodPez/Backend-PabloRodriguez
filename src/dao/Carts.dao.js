@@ -12,6 +12,14 @@ class CartsDao {
         }
     }
 
+    async findOne(id){
+        try {
+            return await Carts.findOne({_id:id, status:true},{})
+        } catch (error) {
+            return error
+        }
+    }
+
     async createMany(newCartsInfo){
         try {
             return await Carts.insertMany(newCartsInfo);
@@ -37,7 +45,7 @@ class CartsDao {
     }
 
     async deleteAll(){
-        return await Carts.deleteMany();
+        return Carts.deleteMany({});
     }
 }
 
