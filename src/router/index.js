@@ -10,6 +10,7 @@ const cartsRouter = require("../carts/carts.router")
 const cartsController = require("../carts/controller.carts")
 const homeRouter = require("../inicio/home.router")
 const realTimeProductsRouter = require("../realTimeProducts/realTimeProducts.router")
+const templatesController = require("../templates/controller.templates")
 
 const router = app =>{
     app.use("/", homeRouter(listaDeProductos));
@@ -18,6 +19,7 @@ const router = app =>{
     app.use("/realtimeproducts", realTimeProductsRouter);
     app.use("/products", productsController);
     app.use("/carts", cartsController);
+    app.use("/chat", templatesController);
     
 }
 
