@@ -1,17 +1,17 @@
 const {Router}= require("express");
-const CartsFileManager = require("../dao/CartsFileManager.dao");
 const CartsDao = require("../dao/Carts.dao");
 const ProductsDao = require("../dao/Products.dao");
+const FilesDao = require("../dao/Files.dao");
 
 
 const router = Router();
-const cartFManager = new CartsFileManager();
+const filesDao = new FilesDao("Carritos.json");
 const cartsDao = new CartsDao();
 const productsDao = new ProductsDao();
 
 router.get("/loadCarts", async (req,res) =>{
     try {
-        const carts = await cartFManager.loadCarts();
+        const carts = await filesDao.getItems();
         const newCarts = await cartsDao.createMany(carts);
         res.json({message: newCarts})
     } catch (error) {
@@ -49,18 +49,18 @@ router.post("/", async (req,res) =>{
     }
 })
 
-router.post("/:cid/product/:pid" , async (req, res , next) =>{
+router.patch("/:cid" , async (req, res , next) =>{
     try {
-        const {cid,pid} = req.params
-        const {cantidad} = req.body;
+        const {cid} = req.params
+        const {product,cantidad} = req.body;
         const cant = cantidad;
         const carrito = await cartsDao.findOne(cid);
         
         if (!carrito.products) {
             carrito.products = [];
         }
-        const productoExistente = carrito.products.find(producto => producto.id === pid);
-        const prodAAgregar = await productsDao.findOne(pid);
+        const productoExistente = carrito.products.find(producto => producto.product == product);
+        const prodAAgregar = await productsDao.findOne(product);
         if (productoExistente && prodAAgregar.stock >= cant) {
             productoExistente.cantidad += cant;
         } else {
@@ -68,7 +68,7 @@ router.post("/:cid/product/:pid" , async (req, res , next) =>{
             if (prodAAgregar.stock === 0) {
                 res.status(404).json({message: "El producto que desea agregar se encuentra agotado"})
             } else {
-                carrito.products.push({id:pid, cantidad: cant});
+                carrito.products.push({product, cantidad: cant});
                 console.log(carrito.products);
             }
         }

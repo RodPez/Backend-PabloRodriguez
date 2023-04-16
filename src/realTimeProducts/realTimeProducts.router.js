@@ -1,7 +1,7 @@
 const {Router} = require("express");
 const fs = require("fs");
 let productosActuales =[];
-const archivo = "./files/Productos.json"
+const archivo = process.cwd() + "/files/Productos.json"
 const router = Router();
 
 router.get("/", (req, res) =>{

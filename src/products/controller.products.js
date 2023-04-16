@@ -1,14 +1,15 @@
 const {Router}= require("express");
-const ProductsFileManager = require("../dao/ProductsFileManager.dao");
 const ProductsDao = require("../dao/Products.dao");
+const FilesDao = require("../dao/Files.dao");
 
 const router = Router();
-const productsFManager = new ProductsFileManager();
+const filesDao = new FilesDao("Productos.json");
 const productsDao = new ProductsDao();
+const productos = []
 
 router.get("/loadProducts", async (req,res) =>{
     try {
-        const products = await productsFManager.loadProducts();
+        const products = await filesDao.getItems();
         console.log(products);
         const newProducts = await productsDao.createMany(products);
         console.log(newProducts);
@@ -21,7 +22,8 @@ router.get("/loadProducts", async (req,res) =>{
 router.get("/", async (req, res) =>{
     try {
         const products = await productsDao.findAll({status:true})
-        res.status(200).json({message: products})
+        res.render("mongoProducts.handlebars",{products})
+        console.log("vista cargada correctamente");
         
     } catch (error) {
         res.status(500).json({ error: "Error interno del servidor" });

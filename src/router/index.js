@@ -13,13 +13,13 @@ const realTimeProductsRouter = require("../realTimeProducts/realTimeProducts.rou
 const templatesController = require("../templates/controller.templates")
 
 const router = app =>{
-    app.use("/", homeRouter(listaDeProductos));
-    app.use("/api/products" ,productsRouter(listaDeProductos));
-    app.use("/api/carts", cartsRouter(listaDeCarts,listaDeProductos));
-    app.use("/realtimeproducts", realTimeProductsRouter);
-    app.use("/products", productsController);
-    app.use("/carts", cartsController);
-    app.use("/chat", templatesController);
+    app.use("/", homeRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
+    app.use("/api/products" ,productsRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
+    app.use("/api/carts", cartsRouter(listaDeCarts,listaDeProductos)); //Este endpoint trabaja solamente con fs
+    app.use("/realtimeproducts", realTimeProductsRouter);//Este endpoint trabaja solamente con fs
+    app.use("/products", productsController); //Este endpoint trabaja con mongoose y fs
+    app.use("/carts", cartsController);//Este endpoint trabaja con mongoose y fs
+    app.use("/chat", templatesController);//Este endpoint trabaja con mongoose y fs
     
 }
 
