@@ -5,7 +5,7 @@ const FilesDao = require("../dao/Files.dao");
 const router = Router();
 const filesDao = new FilesDao("Productos.json");
 const productsDao = new ProductsDao();
-const productos = []
+
 
 router.get("/loadProducts", async (req,res) =>{
     try {
@@ -21,8 +21,16 @@ router.get("/loadProducts", async (req,res) =>{
 
 router.get("/", async (req, res) =>{
     try {
-        const products = await productsDao.findAll({status:true})
-        res.render("mongoProducts.handlebars",{products})
+        const limite = parseInt(req.query.limit) || 10;
+        const pagina = parseInt(req.query.page) || 1;
+        const ordenar = {price:parseInt(req.query.sort)} || {} ;
+        const type = req.query.type || null;
+        const filter = type ? {type} : null;
+        const result = await productsDao.findAll(filter,ordenar,limite,pagina)
+        const products = result.products;
+        const pagination = result.pagination;
+        console.log(result);
+        res.render("mongoProducts.handlebars",{products,pagination})
         console.log("vista cargada correctamente");
         
     } catch (error) {

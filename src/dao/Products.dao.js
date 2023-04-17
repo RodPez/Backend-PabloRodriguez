@@ -3,10 +3,22 @@ const Products = require("./models/Products.model");
 class ProductsDao {
     constructor() {}
 
-    async findAll(){
+    async findAll(query,ordenar, limite, pagina){
         try {
-            const allProd = await Products.find({status:true});
-            return allProd;
+            const filtro = query ? { $text: { $search: query } } : {};
+            const allProd = await Products.paginate({ status: true, ...filtro },{sort: ordenar,limit: limite, page:pagina});
+            return {
+                products: allProd.docs, 
+                pagination: {
+                  page: parseInt(allProd.page),
+                  nextPage: allProd.page + 1,
+                  prevPage: allProd.page - 1, 
+                  totalPages: allProd.totalPages, 
+                  totalDocs:allProd.totalDocs, 
+                  hasNextPage: allProd.hasNextPage, 
+                  hasPrevPage: allProd.hasPrevPage 
+                }
+            };
         } catch (error) {
             return error
         }

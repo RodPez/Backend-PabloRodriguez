@@ -49,7 +49,7 @@ router.post("/", async (req,res) =>{
     }
 })
 
-router.patch("/:cid" , async (req, res , next) =>{
+router.put("/:cid" , async (req, res , next) =>{
     try {
         const {cid} = req.params
         const {product,cantidad} = req.body;
@@ -59,21 +59,17 @@ router.patch("/:cid" , async (req, res , next) =>{
         if (!carrito.products) {
             carrito.products = [];
         }
-        const productoExistente = carrito.products.find(producto => producto.product == product);
+
+        const productoExistente = carrito.products.find(producto => producto.product._id.toString() === product.toString());
+        
         const prodAAgregar = await productsDao.findOne(product);
-        if (productoExistente && prodAAgregar.stock >= cant) {
-            productoExistente.cantidad += cant;
+        if (!productoExistente && prodAAgregar.stock >= cant) {
+            carrito.products.push({product, cantidad: cant});
+            await cartsDao.update({_id:cid}, {products: carrito.products})
+            res.status(201).json({message: "El producto se agrego al carrito exitosamente"})   
         } else {
-            
-            if (prodAAgregar.stock === 0) {
-                res.status(404).json({message: "El producto que desea agregar se encuentra agotado"})
-            } else {
-                carrito.products.push({product, cantidad: cant});
-                console.log(carrito.products);
-            }
+            res.status(404).json({message: "El producto que desea agregar se encuentra agotado o ya esta ingresado"})
         }
-        await cartsDao.update({_id:cid}, {products: carrito.products})
-        res.status(201).json({message: "El producto se agrego al carrito exitosamente"})   
     } catch (error) {
         console.log(`No se pudo cargar el producto al carrito correctamente ${error}`);
         res.status(500).json({error: "No se pudo cargar el producto al carrito correctamente"})

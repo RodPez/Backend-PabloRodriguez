@@ -15,4 +15,24 @@
     {{/each}}
 </div>
 
+<div class="d-flex justify-content-center">
+    <p class="justify-content-center">Página {{ pagination.page }} de {{ pagination.totalPages }}</p>
+</div>
+<div class="d-flex justify-content-center">
+    <p>Encontrados {{ pagination.totalDocs }} productos</p>
+</div>
+<div class="d-flex justify-content-center">
+    <div class="d-inline-flex  p-3 align-content-center">
+        {{#if pagination.hasPrevPage}}
+            <a href="?page={{ pagination.prevPage }}">Anterior</a>
+        {{/if}}
+    </div>
+    <div class="d-inline-flex  p-3 align-content-center">
+        {{#if pagination.hasNextPage}}
+            <a href="?page= {{pagination.nextPage}} ">Siguiente</a>
+        {{/if}}
+    </div>
+</div>
+</div>
+
 
