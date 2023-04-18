@@ -62,8 +62,8 @@ router.put("/:cid" , async (req, res , next) =>{
 
         const productoExistente = carrito.products.find(producto => producto.product._id.toString() === product.toString());
         
-        const prodAAgregar = await productsDao.findOne(product);
-        if (!productoExistente && prodAAgregar.stock >= cant) {
+        
+        if (!productoExistente ) {
             carrito.products.push({product, cantidad: cant});
             await cartsDao.update({_id:cid}, {products: carrito.products})
             res.status(201).json({message: "El producto se agrego al carrito exitosamente"})   
@@ -77,16 +77,84 @@ router.put("/:cid" , async (req, res , next) =>{
     }
 })
 
+router.put("/:cid/products/:pid" , async (req, res , next) =>{
+    try {
+        const {cid, pid} = req.params
+        const {cantidad} = req.body;
+        const cant = cantidad;
+        const carrito = await cartsDao.findOne(cid);
+        console.log(carrito);
+        if (carrito) {
+            const productIndex = carrito.products.findIndex(producto => producto.product._id.toString() === pid.toString());
+            console.log(productIndex);
+            if (productIndex !== -1) {
+                carrito.products[productIndex].cantidad += cant;
+                await cartsDao.update({_id:cid},  { products: carrito.products })
+                res.status(201).json({message: "El producto se modifico exitosamente"})   
+            } else {
+                res.status(404).json({message: "El producto que desea agregar se encuentra agotado o no esta ingresado"})
+            }
+        }else{
+            res.status(404).json({message: "No se pudo encontrar el carrito especificado"})
+        }
+        
+        
+    } catch (error) {
+        console.log(`No se pudo cargar el producto al carrito correctamente ${error}`);
+        res.status(500).json({error: "No se pudo modificar el producto del carrito correctamente"})
+        next(error)
+    }
+})
+
+router.delete("/:cid/products/:pid" , async (req, res , next) =>{
+    try {
+        const {cid, pid} = req.params
+        const carrito = await cartsDao.findOne(cid);
+        console.log(carrito);
+        if (carrito) {
+            const productIndex = carrito.products.findIndex(producto => producto.product._id.toString() === pid.toString());
+            console.log(productIndex);
+            if (productIndex !== -1) {
+                carrito.products.splice(productIndex,1);
+                await cartsDao.update({_id:cid},  { products: carrito.products })
+                res.status(201).json({message: "El producto se elimino exitosamente"})   
+            } else {
+                res.status(404).json({message: "El producto que desea eliminar  no esta ingresado"})
+            }
+        }else{
+            res.status(404).json({message: "No se pudo encontrar el carrito especificado"})
+        }
+        
+        
+    } catch (error) {
+        console.log(`No se pudo eliminar el producto al carrito correctamente ${error}`);
+        res.status(500).json({error: "No se pudo eliminar el producto del carrito correctamente"})
+        next(error)
+    }
+})
+
 
 router.delete("/:id", async (req, res) =>{
     try {
         const {id} =req.params;
-        const deleteCart = await cartsDao.update({_id:id},{status:false})
-        res.status(200).json({message: deleteCart})
+        const carrito = await cartsDao.findOne(id);
+        console.log(carrito);
+        if (carrito) {
+            carrito.products = [];
+            await cartsDao.update({_id:id},  { products: carrito.products })
+            res.status(201).json({message: "Los productos se eliminaron exitosamente"})   
+        }else{
+            res.status(404).json({message: "No se pudo encontrar el carrito especificado"})
+        }
+        
+        
     } catch (error) {
-        res.json(error)
+        console.log(`No se pudieron eliminar los productos al carrito correctamente ${error}`);
+        res.status(500).json({error: "No se pudieron eliminar los productos del carrito correctamente"})
+        next(error)
     }
 })
+
 
 router.delete("/delete/all", async (req,res) =>{
     try {
