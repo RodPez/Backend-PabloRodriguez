@@ -33,7 +33,8 @@ router.get("/:id", async (req,res) =>{
     try {
         const {id} =req.params;
         const cartFinded = await cartsDao.findOne(id)
-        res.status(200).json({message: cartFinded})
+        //res.status(200).json({message: cartFinded})
+        res.render("mongoIdCart.handlebars",{cartFinded})
     } catch (error) {
         res.json(error)
     }

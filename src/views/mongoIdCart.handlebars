@@ -1,0 +1,16 @@
+<div>
+    <h1 class="text-center">Cart products</h1>
+</div>
+<div class="row d-flex flex-wrap m-1 justify-content-center">
+    {{#each cartFinded.products}}
+        <div class="col-sm-3">
+            <div class="card text-center m-2  text-bg-secondary">
+                <h2 class="card-title">{{this.product.title}}</h2>
+                <div class="card-body">
+                    <p>Descipción: {{this.product.description}}</p>
+                    <p>cantidad: {{this.cantidad}}</p>
+                </div>
+            </div>
+        </div>   
+    {{/each}}
+</div>
