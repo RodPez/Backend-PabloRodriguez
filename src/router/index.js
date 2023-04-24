@@ -13,6 +13,7 @@ const realTimeProductsRouter = require("../realTimeProducts/realTimeProducts.rou
 const templatesController = require("../templates/controller.templates")
 const cookiesController = require("../cookies/controller.cookies");
 const usersController = require("../users/controller.users")
+const authController = require("../auth/controller.auth")
 
 const router = app =>{
     app.use("/", homeRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
@@ -24,6 +25,7 @@ const router = app =>{
     app.use("/chat", templatesController);//Este endpoint trabaja con mongoose y fs
     app.use("/cookies" , cookiesController);
     app.use("/users", usersController)
+    app.use("/auth", authController)
     
 }
 

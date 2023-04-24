@@ -1,15 +1,27 @@
 const {Router} = require("express");
 
+const Users = require("../dao/models/Users.model");
+
 const router = Router();
 
-router.get("/session", (req, res) =>{
-    if (req.session.counter) {
-        req.session.counter++
-        return res.json({message:`${req.session.counter} veces` })
-    }
+router.post("/", async (req,res) =>{
+    try {
+        const {first_name, last_name, email, age, password } = req.body;
+        const newUserInfo = {
+            first_name,
+            last_name,
+            email,
+            age,
+            password
+        }
 
-    req.session.counter = 1;
-    res.json({message: "Bienvenido"})
+        const user = await Users.createOne(newUserInfo);
+        res.status(201).json({status : "succes", message: user})
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({status: "error", error:"Internal server error"})
+    }
 })
+
 
 module.exports = router;
