@@ -14,9 +14,10 @@ const templatesController = require("../templates/controller.templates")
 const cookiesController = require("../cookies/controller.cookies");
 const usersController = require("../users/controller.users")
 const authController = require("../auth/controller.auth")
+const viewsTemplateController = require("../viewstemplate/controller.viewstemplate")
 
 const router = app =>{
-    app.use("/", homeRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
+    //app.use("/", homeRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
     app.use("/api/products" ,productsRouter(listaDeProductos)); //Este endpoint trabaja solamente con fs
     app.use("/api/carts", cartsRouter(listaDeCarts,listaDeProductos)); //Este endpoint trabaja solamente con fs
     app.use("/realtimeproducts", realTimeProductsRouter);//Este endpoint trabaja solamente con fs
@@ -26,6 +27,7 @@ const router = app =>{
     app.use("/cookies" , cookiesController);
     app.use("/users", usersController)
     app.use("/auth", authController)
+    app.use("/", viewsTemplateController)
     
 }
 
