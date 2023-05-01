@@ -21,6 +21,7 @@ router.get("/loadProducts", async (req,res) =>{
 
 router.get("/", async (req, res) =>{
     try {
+        const {user} = req.session;
         const limite = parseInt(req.query.limit) || 10;
         const pagina = parseInt(req.query.page) || 1;
         const ordenar = {price:parseInt(req.query.sort)} || {} ;
@@ -30,7 +31,7 @@ router.get("/", async (req, res) =>{
         const products = result.products;
         const pagination = result.pagination;
         console.log(result);
-        res.render("mongoProducts.handlebars",{products,pagination})
+        res.render("mongoProducts.handlebars",{products,pagination, user})
         console.log("vista cargada correctamente");
         
     } catch (error) {
