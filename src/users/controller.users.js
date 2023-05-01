@@ -1,6 +1,7 @@
 const {Router} = require("express");
 
 const Users = require("../dao/models/Users.model");
+const { createHash } = require("../utils/cryptPassword.utils");
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.post("/", async (req,res) =>{
             last_name,
             email,
             age,
-            password
+            password: createHash(password)
         }
 
         const user = await Users.create(newUserInfo);
