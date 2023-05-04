@@ -2,9 +2,11 @@ const express = require("express");
 const session = require("express-session");
 const handlebars = require("express-handlebars");
 const MongoStore = require("connect-mongo");
-const mongoConnect = require("../db/index.js");
+const passport = require("passport");
 const cookieParser = require("cookie-parser");
+const mongoConnect = require("../db/index.js");
 const {dbAdmin, dbPassword,dbHost, dbName} = require("../src/config/db.config");
+const initializePassport = require("../src/config/passport.config")
 const router = require("./router/index.js");
 
 const app = express();
@@ -31,6 +33,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.engine(".handlebars", hbs.engine);
 app.set("views", __dirname + "/views")
