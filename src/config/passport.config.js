@@ -1,11 +1,15 @@
 const passport = require("passport");
+const jwt = require("passport-jwt")
 const local = require("passport-local");
 const GithubStrategy = require("passport-github2");
 const { createHash } = require("../utils/cryptPassword.utils");
 const Users = require("../dao/models/Users.model");
 const { passwordValidate } = require("../utils/cryptPassword.utils");
+const cookieExtractor = require("../utils/cookieExtractor.utils");
+
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
 
 const initializePassport = () =>{
     passport.use("signup", 
@@ -22,6 +26,7 @@ const initializePassport = () =>{
                     }
 
                     const user = await Users.create(newUserInfo);
+                    
                     done(null, user)
                 } catch (error) {
                     done(error)
@@ -48,6 +53,19 @@ const initializePassport = () =>{
                     done(error)
                 }
             } 
+        )
+    )
+
+    passport.use("jwt", new JWTStrategy({
+        jwtFromRequest: jwt.ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.TOKEN_KEY
+        }, async (jwt_payload, done) => {
+                try {
+                    done(null,jwt_payload)
+                } catch (error) {
+                    done(error)
+                }
+            }
         )
     )
 

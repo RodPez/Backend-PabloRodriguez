@@ -1,10 +1,11 @@
 const {Router} = require("express");
 const privateAccess = require("../middlewares/privateAccess.middleware");
-const publicAccess = require("../middlewares/publicAccess.middleware")
+const publicAccess = require("../middlewares/publicAccess.middleware");
+const passport = require("passport");
 
 const router = Router()
 
-router.get("/", privateAccess , (req,res) =>{
+router.get("/", passport.authenticate("jwt",{session:false}) , (req,res) =>{
     const {user} = req.session
     res.render("profile.handlebars", {user})
 })
